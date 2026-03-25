@@ -29,8 +29,15 @@ int main() {
   int endTime = gettimeofday(&tEnd, NULL);
 
   int difSec = tEnd.tv_sec - tStart.tv_sec;
-  int difMSec = tEnd.tv_usec - tStart.tv_usec;
+  int difMSec = 0;
+  if (difSec > 0) {
+    difSec -= 1;
+    difMSec += 100000;
+  }
+  difMSec += tEnd.tv_usec - tStart.tv_usec;
 
   printf("It took %d.%d seconds.microseconds to run 10000 0 byte reads \n",
          difSec, difMSec);
+
+  int timePerCall = 10000 / difMSec;
 }
