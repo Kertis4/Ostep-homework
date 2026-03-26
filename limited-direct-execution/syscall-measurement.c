@@ -18,9 +18,9 @@ int main() {
   char buf[64];
 
   int i = 0;
-
+  double calls = 500000.0;
   int startTime = gettimeofday(&tStart, NULL);
-  while (i < 10000) {
+  while (i < calls) {
 
     ssize_t n = read(fd, buf, 0);
     ++i;
@@ -28,16 +28,17 @@ int main() {
 
   int endTime = gettimeofday(&tEnd, NULL);
 
-  int difSec = tEnd.tv_sec - tStart.tv_sec;
-  int difMSec = 0;
-  if (difSec > 0) {
+  long difSec = tEnd.tv_sec - tStart.tv_sec;
+  long difMSec = tEnd.tv_usec - tStart.tv_usec;
+
+  if (difMSec < 0) {
     difSec -= 1;
     difMSec += 100000;
   }
-  difMSec += tEnd.tv_usec - tStart.tv_usec;
 
-  printf("It took %d.%d seconds.microseconds to run 10000 0 byte reads \n",
-         difSec, difMSec);
+  double totalMicro = (difSec * 100000.0) + difMSec;
+  double timePerCall = totalMicro / calls;
+  printf("Total time: %ld.%06ld seconds\n", difSec, difMSec);
 
-  int timePerCall = 10000 / difMSec;
+  printf("Time per call: %.4f microseconds \n", timePerCall);
 }
